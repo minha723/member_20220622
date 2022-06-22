@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2 th:text="${session.loginId}"></h2>
+<h2 th:text="${session.loginEmail}"></h2>
+<input type="text" th:value="${session.loginId}">
+<a th:href="@{|/member/update/${session.loginId}|}">수정하기</a>
+</body>
+</html>
