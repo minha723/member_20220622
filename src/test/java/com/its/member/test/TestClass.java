@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Member;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -83,5 +84,18 @@ public class TestClass {
         Long saveId = memberService.save(newMember(80));
         memberService.deleteById(saveId);
         assertThat(memberService.findById(saveId)).isNull();
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    @DisplayName("수정 테이트")
+    public void updateTest(){
+        Long saveId = memberService.save(newMember(80));
+        MemberDTO memberDTO = memberService.findById(saveId);
+        MemberDTO updateMemberDTO = memberService.findById(saveId);
+        updateMemberDTO.setMemberPhone("수정함");
+        memberService.update(updateMemberDTO);
+        assertThat(memberService.findById(saveId).getMemberPhone()).isNotEqualTo(memberDTO.getMemberPhone());
     }
 }

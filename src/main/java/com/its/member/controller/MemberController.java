@@ -3,6 +3,8 @@ package com.its.member.controller;
 import com.its.member.dto.MemberDTO;
 import com.its.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -53,12 +55,20 @@ public class MemberController {
         return "memberPages/list";
     }
 
+// /member/3
     @GetMapping("/{id}")
     public String findById(@PathVariable Long id, Model model){
         MemberDTO findMemberDTO = memberService.findById(id);
         model.addAttribute("member", findMemberDTO);
         return "memberPages/detail";
     }
+
+    @PostMapping("/ajax/{id}")
+    public @ResponseBody MemberDTO findByIdAjax(@PathVariable Long id){
+        MemberDTO findMemberDTO = memberService.findById(id);
+        return findMemberDTO;
+    }
+
 
     @GetMapping("/update/{id}")
     public String updateForm(@PathVariable Long id, Model model){
@@ -73,9 +83,31 @@ public class MemberController {
         return "redirect:/member/"+ updateId;
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity updateAjax(@RequestBody MemberDTO memberDTO){
+        memberService.update(memberDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
     @GetMapping("/delete/{id}")
     public String deleteById(@PathVariable Long id){
         memberService.deleteById(id);
         return "redirect:/member/";
+    }
+
+    /**
+     * /member/3:조회(get) R, 저장(post) C, 수정(put) U, 삭제(delete) D
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteByIdAjax(@PathVariable Long id){
+        memberService.deleteById(id);
+        return new ResponseEntity(HttpStatus.OK); //ajax 호출한 부분에 리턴으로 200 응답을 줌
+    }
+
+    @PostMapping("/dup-check")
+    public @ResponseBody String duplicateCheck(@RequestParam String memberEmail){
+        String result = memberService.duplicateCheck(memberEmail);
+        return  result;
     }
 }

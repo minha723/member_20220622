@@ -5,6 +5,7 @@ import com.its.member.entity.MemberEntity;
 import com.its.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
@@ -67,5 +68,14 @@ public class MemberService {
         MemberEntity memberEntity = MemberEntity.toUpdateEntity(memberDTO);
         Long updateId = memberRepository.save(memberEntity).getId();
         return updateId;
+    }
+
+    public String duplicateCheck(String memberEmail) {
+        Optional<MemberEntity> optionalMemberEntity = memberRepository.findByMemberEmail(memberEmail);
+        if (optionalMemberEntity.isPresent()) {
+            return "중복";
+        } else {
+            return "";
+        }
     }
 }

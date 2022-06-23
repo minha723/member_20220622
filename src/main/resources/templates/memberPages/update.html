@@ -3,18 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
 </head>
 <body>
-<form action="/member/update" method="post">
-    <input type="text" name="id" th:value="${updateMember.id}" readonly><br>
-    <input type="text" name="memberEmail" th:value="${updateMember.memberEmail}"readonly><br>
-    <input type="text" name="memberPassword" th:value="${updateMember.memberPassword}" readonly><br>
-    <input type="text" name="memberName" th:value="${updateMember.memberName}"><br>
-    <input type="text" name="memberAge" th:value="${updateMember.memberAge}"><br>
-    <input type="text" name="memberPhone" th:value="${updateMember.memberPhone}" readonly><br>
-    <input type="submit" value="수정">
-
+<form action="/member/update" method="post" name="updateForm">
+    <input type="hidden" name="id" th:value="${updateMember.id}"><br>
+    <input type="text" id="memberEmail" name="memberEmail" th:value="${updateMember.memberEmail}" readonly><br>
+    <input type="text" id="memberPassword" name="memberPassword"><br>
+    <input type="text" id="memberName" name="memberName" th:value="${updateMember.memberName}" readonly><br>
+    <input type="text" id="memberAge" name="memberAge" th:value="${updateMember.memberAge}" readonly><br>
+    <input type="text" id="memberPhone" name="memberPhone" th:value="${updateMember.memberPhone}" ><br>
+    <input type="button" th:onclick="update()" value="수정">
+    <button th:onclick="updateAjax()">수정 ajax</button>
 </form>
 
 </body>
+<script th:inline="javascript">
+
+    const update = () => {
+        const pwDB = [[${updateMember.memberPassword}]];
+        const pw = document.getElementById("memberPassword").value;
+
+        if (pwDB == pw) {
+            updateForm.submit();
+        } else {
+            alert("비밀번호가 틀립니다.")
+        }
+    }
+
+    const updateAjax = () => {
+        const id = [[${updateMember.id}]];
+        const memberEmail = [[${updateMember.memberEmail}]];
+        const memberPassword = [[${updateMember.memberPassword}]];
+        const memberName = [[${updateMember.memberName}]];
+        const memberAge = [[${updateMember.memberAge}]];
+        const memberPhone = document.getElementById("memberPhone").value;
+        //json형식으로 보냄
+
+        const updateData = JSON.stringify({
+            id: id,
+            memberEmail:memberEmail,
+            memberPassword: memberPassword,
+            memberName:memberName,
+            memberAge: memberAge,
+            memberPhone: memberPhone
+        })
+
+            $.ajax({
+                type: "put",
+                url: "/member/" + id,
+                contentType: "application/json",
+                success: function () {
+                    location.href = "/member/" + id;
+                }, error: function () {
+                    alert("ajax 실패")
+                }
+            });
+    }
+</script>
 </html>
